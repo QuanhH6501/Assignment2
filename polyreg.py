@@ -9,6 +9,7 @@ import numpy as np
 #-----------------------------------------------------------------
 #  Class PolynomialRegression
 #-----------------------------------------------------------------
+
 class PolynomialRegression:
 
     def __init__(self, degree = 1, regLambda = 1E-8):
@@ -101,9 +102,11 @@ class PolynomialRegression:
         XExpandedNP = np.c_[np.ones((XExpandedNP.shape[0],1)), XExpandedNP]
 
         return XExpandedNP.dot(self.theta)
+
 #-----------------------------------------------------------------
 #  End of Class PolynomialRegression
 #-----------------------------------------------------------------
+
 
 
 def learningCurve(Xtrain, Ytrain, Xtest, Ytest, regLambda, degree):
@@ -119,31 +122,31 @@ def learningCurve(Xtrain, Ytrain, Xtest, Ytest, regLambda, degree):
         degree -- polynomial degree
         
     Returns:
-        errorTrains -- errorTrains[i] is the training accuracy using
+        errorTrain -- errorTrain[i] is the training accuracy using
         model trained by Xtrain[0:(i+1)]
-        errorTests -- errorTrains[i] is the testing accuracy using
+        errorTest -- errorTrain[i] is the testing accuracy using
         model trained by Xtrain[0:(i+1)]
         
     Note:
-        errorTrains[0:1] and errorTests[0:1] won't actually matter, since we start displaying the learning curve at n = 2 (or higher)
+        errorTrain[0:1] and errorTest[0:1] won't actually matter, since we start displaying the learning curve at n = 2 (or higher)
     '''
     
     n = len(Xtrain);
     
     errorTrain = np.zeros((n))
     errorTest = np.zeros((n))
-    for i in xrange(2, n):
-        Xtrain_subset = Xtrain[:(i+1)]
-        Ytrain_subset = Ytrain[:(i+1)]
-        model = PolynomialRegression(degree, regLambda)
-        model.fit(Xtrain_subset,Ytrain_subset)
-        
-        predictTrain = model.predict(Xtrain_subset)
-        err = predictTrain - Ytrain_subset;
-        errorTrain[i] = np.multiply(err, err).mean();
-        
-        predictTest = model.predict(Xtest)
-        err = predictTest - Ytest;
-        errorTest[i] = np.multiply(err, err).mean();
     
+    #TODO -- complete rest of method; errorTrain and errorTest are already the correct shape
+    
+    model = PolynomialRegression(degree = degree, regLambda = regLambda)
+
+    i = 2
+    while i < n:
+        model.fit(Xtrain[0:i], Ytrain[0:i])
+        predictions_train = model.predict(Xtrain[0:i])
+        predictions_test = model.predict(Xtest)
+        errorTrain[i] = 1.0/i  * sum((predictions_train - Ytrain[0:i]) ** 2)
+        errorTest[i]  = 1.0/(len(Xtest)) * sum((predictions_test - Ytest) ** 2)
+        i += 1
+
     return (errorTrain, errorTest)

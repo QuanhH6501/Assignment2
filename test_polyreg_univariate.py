@@ -13,7 +13,7 @@ if __name__ == "__main__":
     '''
 
     # load the data
-    filePath = "E:\daihoc\soft\github-dir\CIS419-master\Assignment2\hw2_skeleton\data\polydata.dat"
+    filePath = "data/polydata.dat"
     file = open(filePath,'r')
     allData = np.loadtxt(file, delimiter=',')
 
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     plt.figure()
     plt.plot(X, y, 'rx')
     plt.title('PolyRegression with d = '+str(d))
-    # plt.hold(True)
+    plt.hold(True)
     plt.plot(xpoints, ypoints, 'b-')
     plt.xlabel('X')
     plt.ylabel('Y')

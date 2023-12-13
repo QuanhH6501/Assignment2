@@ -12,7 +12,7 @@ from polyreg import PolynomialRegression
 
 from sklearn.linear_model import Ridge
 from sklearn.preprocessing import PolynomialFeatures
-from sklearn.model_selection import train_test_split
+from sklearn import cross_validation
 
 from polyreg import learningCurve
 
@@ -50,22 +50,28 @@ def generateLearningCurve(X, y, degree, regLambda):
     '''
 
     n = len(X);
-
+    
     errorTrains = np.zeros((n, n-1));
     errorTests = np.zeros((n, n-1));
-
-    for itrial in range(n):
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=1, random_state=itrial)
+    
+    loo = cross_validation.LeaveOneOut(n)
+    itrial = 0
+    for train_index, test_index in loo:
+        #print("TRAIN indices:", train_index, "TEST indices:", test_index)
+        X_train, X_test = X[train_index], X[test_index]
+        y_train, y_test = y[train_index], y[test_index]
 
         (errTrain, errTest) = learningCurve(X_train, y_train, X_test, y_test, regLambda, degree)
 
         errorTrains[itrial, :] = errTrain
         errorTests[itrial, :] = errTest
+        itrial = itrial + 1
 
-    errorTrain = errorTrains.mean(axis=0)
-    errorTest = errorTests.mean(axis=0)
+    errorTrain = errorTrains.mean(axis = 0)
+    errorTest = errorTests.mean(axis = 0)
 
     plotLearningCurve(errorTrain, errorTest, regLambda, degree)
+
 
 
 
